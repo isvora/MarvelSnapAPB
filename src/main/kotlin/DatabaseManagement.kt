@@ -2,10 +2,28 @@ import java.sql.Connection
 import java.sql.DriverManager
 import java.util.*
 
-data class Article(val id: Int, val title: String, val url: String) : Comparable<Article> {
+data class Article(val id: Long, val title: String, val url: String) : Comparable<Article> {
     override fun compareTo(other: Article): Int {
         return compareValuesBy(this, other) { it.id }
     }
+
+    override fun equals(other: Any?): Boolean {
+        other as Article
+
+        if (title == other.title && url == other.url) {
+            return true
+        }
+
+        return false
+    }
+
+    override fun hashCode(): Int {
+        var result = id.hashCode()
+        result = 31 * result + title.hashCode()
+        result = 31 * result + url.hashCode()
+        return result
+    }
+
 }
 
 class DatabaseManagement {
@@ -27,7 +45,7 @@ class DatabaseManagement {
         val existingArticles = mutableListOf<Article>()
 
         while (result.next()) {
-            existingArticles.add(Article(result.getInt("id"),
+            existingArticles.add(Article(result.getLong("id"),
                 result.getString("title"),
                 result.getString("url")))
         }
