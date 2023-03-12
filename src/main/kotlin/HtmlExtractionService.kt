@@ -3,7 +3,6 @@ import it.skrape.fetcher.HttpFetcher
 import it.skrape.fetcher.extractIt
 import it.skrape.fetcher.skrape
 import it.skrape.selects.DocElement
-import mu.KotlinLogging
 
 data class MyDataClass(
     var httpStatusCode: Int = 0,
@@ -11,8 +10,6 @@ data class MyDataClass(
 )
 
 class HtmlExtractionService {
-
-    private val logger = KotlinLogging.logger {}
 
     fun extract(url: String, cssQuery: String) : List<DocElement> {
         val extracted = skrape(HttpFetcher) {
@@ -29,11 +26,10 @@ class HtmlExtractionService {
         }
 
         if (extracted.httpStatusCode != 200) {
-            logger.error { url + " returned status code " + extracted.httpStatusCode }
-            throw Exception()
+            throw RuntimeException(url + " returned status code " + extracted.httpStatusCode )
         }
 
-        return extracted.allLinks.filter { it.element.`is`(cssQuery) };
+        return extracted.allLinks.filter { it.element.`is`(cssQuery) }
     }
 
 }
